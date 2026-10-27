@@ -1,0 +1,1801 @@
+{
+  "scope": "Synthetic QA fixtures only; API evidence, not browser screenshots.",
+  "startedAt": "2026-10-27T10:14:34.988Z",
+  "checks": [
+    {
+      "id": "SETUP",
+      "at": "2026-10-27T10:14:39.957Z",
+      "action": "Create isolated events under seeded Org 1 organizer.",
+      "expected": "Three named synthetic events; no changes to existing events.",
+      "observed": {
+        "A": {
+          "id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "title": "QA Audit 2026-10-27 Event A",
+          "capacity": 3,
+          "status": "open"
+        },
+        "B": {
+          "id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "title": "QA Audit 2026-10-27 Event B",
+          "capacity": 3,
+          "status": "open"
+        },
+        "race": {
+          "id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "title": "QA Audit 2026-10-27 Last Seat",
+          "capacity": 1,
+          "status": "open"
+        }
+      }
+    },
+    {
+      "id": "TCND-09",
+      "at": "2026-10-27T10:14:40.266Z",
+      "action": "Try invalid capacity 0 via the same database API.",
+      "expected": "No event created.",
+      "observed": {
+        "data": null,
+        "error": {
+          "code": "23514",
+          "message": "new row for relation \"events\" violates check constraint \"events_capacity_check\""
+        },
+        "status": 400
+      }
+    },
+    {
+      "id": "TCND-09",
+      "at": "2026-10-27T10:14:40.577Z",
+      "action": "Try invalid capacity -1 via the same database API.",
+      "expected": "No event created.",
+      "observed": {
+        "data": null,
+        "error": {
+          "code": "23514",
+          "message": "new row for relation \"events\" violates check constraint \"events_capacity_check\""
+        },
+        "status": 400
+      }
+    },
+    {
+      "id": "TCND-09",
+      "at": "2026-10-27T10:14:40.908Z",
+      "action": "Try invalid capacity abc via the same database API.",
+      "expected": "No event created.",
+      "observed": {
+        "data": null,
+        "error": {
+          "code": "22P02",
+          "message": "invalid input syntax for type integer: \"abc\""
+        },
+        "status": 400
+      }
+    },
+    {
+      "id": "TCND-09",
+      "at": "2026-10-27T10:14:42.195Z",
+      "action": "Org 2 attempts edit/cancel of Org 1 Event A.",
+      "expected": "Denied; venue/status unchanged.",
+      "observed": {
+        "edit": {
+          "data": null,
+          "error": {
+            "code": "PGRST116",
+            "message": "Cannot coerce the result to a single JSON object"
+          },
+          "status": 406
+        },
+        "cancel": {
+          "data": null,
+          "error": {
+            "code": "PGRST116",
+            "message": "Cannot coerce the result to a single JSON object"
+          },
+          "status": 406
+        },
+        "before": {
+          "id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "status": "open",
+          "venue": "QA Test Hall A Edited"
+        },
+        "after": {
+          "id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "status": "open",
+          "venue": "QA Test Hall A Edited"
+        }
+      }
+    },
+    {
+      "id": "TCND-01",
+      "at": "2026-10-27T10:14:43.162Z",
+      "action": "Student queries organizer records and attempts event creation.",
+      "expected": "No other profiles/private registrations; organizer action denied.",
+      "observed": {
+        "profiles": [
+          {
+            "id": "9f9167cb-95e3-a43c-41cc-8982ab6a8ee6",
+            "role": "student"
+          }
+        ],
+        "registrations": {
+          "data": [],
+          "error": null,
+          "status": 200
+        },
+        "create": {
+          "data": null,
+          "error": {
+            "code": "42501",
+            "message": "new row violates row-level security policy for table \"events\""
+          },
+          "status": 403
+        }
+      }
+    },
+    {
+      "id": "TCND-03",
+      "at": "2026-10-27T10:16:55.730Z",
+      "action": "Replay accepted registration and retry from independently authenticated second session.",
+      "expected": "Clear refusal; still exactly one registration/ticket.",
+      "observed": {
+        "duplicate": {
+          "startedAt": "2026-10-27T10:16:54.901Z",
+          "finishedAt": "2026-10-27T10:16:55.170Z",
+          "durationMs": 270,
+          "data": null,
+          "error": {
+            "code": "P0001",
+            "message": "You are already registered for this event. View your existing ticket."
+          },
+          "status": 400
+        },
+        "duplicateSecondSession": {
+          "startedAt": "2026-10-27T10:16:55.436Z",
+          "finishedAt": "2026-10-27T10:16:55.730Z",
+          "durationMs": 294,
+          "data": null,
+          "error": {
+            "code": "P0001",
+            "message": "You are already registered for this event. View your existing ticket."
+          },
+          "status": 400
+        },
+        "registration": [
+          {
+            "id": "9022b943-ce92-4c40-92e3-d5d960284add",
+            "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+            "user_id": "9f9167cb-95e3-a43c-41cc-8982ab6a8ee6",
+            "status": "registered",
+            "registered_at": "2026-10-27T10:15:23.659092+00:00"
+          }
+        ],
+        "tickets": [
+          {
+            "id": "b0a0f5c5-f60c-4ccc-bb50-699eafc25f08",
+            "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+            "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+            "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"9022b943-ce92-4c40-92e3-d5d960284add\", \"ticketId\" : \"b0a0f5c5-f60c-4ccc-bb50-699eafc25f08\"}"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TCND-02",
+      "at": "2026-10-27T10:16:58.334Z",
+      "action": "Barrier-release two independently authenticated API requests for one seat, then retry sequentially.",
+      "expected": "At most one accepted; count=1/capacity1; rejected request has no ticket.",
+      "observed": {
+        "startedAt": "2026-10-27T10:16:56.323Z",
+        "attempts": [
+          {
+            "account": "studentA",
+            "startedAt": "2026-10-27T10:16:56.323Z",
+            "finishedAt": "2026-10-27T10:16:56.612Z",
+            "durationMs": 289,
+            "data": null,
+            "error": {
+              "code": "P0001",
+              "message": "This event is full."
+            },
+            "status": 400
+          },
+          {
+            "account": "studentB",
+            "startedAt": "2026-10-27T10:16:56.323Z",
+            "finishedAt": "2026-10-27T10:16:56.617Z",
+            "durationMs": 294,
+            "data": {
+              "id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+              "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+              "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+              "status": "registered"
+            },
+            "error": null,
+            "status": 201
+          }
+        ],
+        "sequential": {
+          "startedAt": "2026-10-27T10:16:56.617Z",
+          "finishedAt": "2026-10-27T10:16:56.910Z",
+          "durationMs": 293,
+          "data": null,
+          "error": {
+            "code": "P0001",
+            "message": "This event is full."
+          },
+          "status": 400
+        },
+        "accepted": [
+          {
+            "id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+            "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+            "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+            "status": "registered",
+            "registered_at": "2026-10-27T10:16:55.992083+00:00"
+          }
+        ],
+        "counts": [
+          {
+            "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+            "accepted_count": 1
+          }
+        ],
+        "tickets": [
+          {
+            "id": "6b0d9e91-a253-4150-8fb0-2518428616cb",
+            "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+            "registration_id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+            "payload": "{\"version\" : 1, \"eventId\" : \"b0f21efd-ea16-4a04-aeee-bc090e7dd612\", \"registrationId\" : \"3f3f2f08-cff0-4355-8b80-b73f163d1d17\", \"ticketId\" : \"6b0d9e91-a253-4150-8fb0-2518428616cb\"}"
+          }
+        ],
+        "browserSimultaneity": "API request intervals only; not two physical devices."
+      }
+    },
+    {
+      "id": "TCND-10",
+      "at": "2026-10-27T10:16:59.957Z",
+      "action": "Cancel unscanned Student B registration in A.",
+      "expected": "Accepted count drops 2→1; remaining 1→2; cancelled registration/ticket retained.",
+      "observed": {
+        "before": {
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "accepted_count": 2
+        },
+        "after": {
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "accepted_count": 1
+        },
+        "cancel": {
+          "data": {
+            "id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+            "status": "cancelled"
+          },
+          "error": null,
+          "status": 200
+        }
+      }
+    },
+    {
+      "id": "TCND-04",
+      "at": "2026-10-27T10:16:59.957Z",
+      "action": "Compare every accepted audit registration and issued ticket, including rejected duplicates/full requests.",
+      "expected": "One ticket per accepted registration; unique IDs/payloads; no ticket for rejection.",
+      "observed": {
+        "registrations": [
+          {
+            "id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+            "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+            "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+            "status": "registered",
+            "registered_at": "2026-10-27T10:16:55.992083+00:00"
+          },
+          {
+            "id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+            "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+            "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+            "status": "cancelled",
+            "registered_at": "2026-10-27T10:16:55.454149+00:00"
+          },
+          {
+            "id": "9022b943-ce92-4c40-92e3-d5d960284add",
+            "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+            "user_id": "9f9167cb-95e3-a43c-41cc-8982ab6a8ee6",
+            "status": "registered",
+            "registered_at": "2026-10-27T10:15:23.659092+00:00"
+          },
+          {
+            "id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+            "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+            "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+            "status": "registered",
+            "registered_at": "2026-10-27T10:16:55.713754+00:00"
+          }
+        ],
+        "tickets": [
+          {
+            "id": "6b0d9e91-a253-4150-8fb0-2518428616cb",
+            "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+            "registration_id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+            "payload": "{\"version\" : 1, \"eventId\" : \"b0f21efd-ea16-4a04-aeee-bc090e7dd612\", \"registrationId\" : \"3f3f2f08-cff0-4355-8b80-b73f163d1d17\", \"ticketId\" : \"6b0d9e91-a253-4150-8fb0-2518428616cb\"}"
+          },
+          {
+            "id": "74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3",
+            "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+            "registration_id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+            "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"7c057a1c-b31c-44e9-a7f6-f904a38849d4\", \"ticketId\" : \"74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3\"}"
+          },
+          {
+            "id": "b0a0f5c5-f60c-4ccc-bb50-699eafc25f08",
+            "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+            "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+            "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"9022b943-ce92-4c40-92e3-d5d960284add\", \"ticketId\" : \"b0a0f5c5-f60c-4ccc-bb50-699eafc25f08\"}"
+          },
+          {
+            "id": "f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b",
+            "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+            "registration_id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+            "payload": "{\"version\" : 1, \"eventId\" : \"9424cf48-5e84-4c7b-b0cc-30ed04effb0a\", \"registrationId\" : \"cd36c29d-87b5-4b00-80f9-6d36cc0f8888\", \"ticketId\" : \"f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b\"}"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TCND-05",
+      "at": "2026-10-27T10:17:00.556Z",
+      "action": "Present Event A issued payload to Event B validator.",
+      "expected": "Wrong event refusal; Event B attendance remains zero.",
+      "observed": {
+        "response": {
+          "data": null,
+          "error": {
+            "code": "P0001",
+            "message": "Wrong event: this ticket belongs to another event."
+          },
+          "status": 400
+        },
+        "payload": {
+          "version": 1,
+          "eventId": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registrationId": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "ticketId": "b0a0f5c5-f60c-4ccc-bb50-699eafc25f08"
+        },
+        "eventBAttendance": []
+      }
+    },
+    {
+      "id": "TCND-10",
+      "at": "2026-10-27T10:17:00.893Z",
+      "action": "Try the cancelled Student B registration ticket.",
+      "expected": "Inactive ticket refused.",
+      "observed": {
+        "data": null,
+        "error": {
+          "code": "P0001",
+          "message": "Registration cancelled: ticket inactive."
+        },
+        "status": 400
+      }
+    },
+    {
+      "id": "TCND-06",
+      "at": "2026-10-27T10:22:04.171Z",
+      "action": "Repeat issued A ticket from two independent organizer API sessions.",
+      "expected": "Exactly one attendance row, correlated to scanned Student A registration.",
+      "observed": {
+        "outcomes": [
+          {
+            "durationMs": 323,
+            "data": "Already checked in",
+            "error": null,
+            "status": 200
+          },
+          {
+            "durationMs": 728,
+            "data": "Already checked in",
+            "error": null,
+            "status": 200
+          }
+        ],
+        "attendance": [
+          {
+            "id": "ac87f93a-26dd-4dd6-9977-810a035f6205",
+            "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+            "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+            "checked_in_by": "de1c8b82-fe3f-c0eb-3e12-73ed2775c9c6",
+            "checked_in_at": "2026-10-27T10:20:51.986557+00:00"
+          }
+        ],
+        "registrations": [
+          {
+            "id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+            "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+            "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+            "status": "cancelled",
+            "registered_at": "2026-10-27T10:16:55.454149+00:00"
+          },
+          {
+            "id": "9022b943-ce92-4c40-92e3-d5d960284add",
+            "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+            "user_id": "9f9167cb-95e3-a43c-41cc-8982ab6a8ee6",
+            "status": "attended",
+            "registered_at": "2026-10-27T10:15:23.659092+00:00"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TCND-07",
+      "at": "2026-10-27T10:22:04.172Z",
+      "action": "Reconcile attendance in both directions across events A/B and cancelled registration.",
+      "expected": "A contains only Student A; B empty; no cancelled/unscanned student counted.",
+      "observed": {
+        "attendance": [
+          {
+            "id": "ac87f93a-26dd-4dd6-9977-810a035f6205",
+            "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+            "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+            "checked_in_by": "de1c8b82-fe3f-c0eb-3e12-73ed2775c9c6",
+            "checked_in_at": "2026-10-27T10:20:51.986557+00:00"
+          }
+        ],
+        "registrations": [
+          {
+            "id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+            "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+            "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+            "status": "registered",
+            "registered_at": "2026-10-27T10:16:55.992083+00:00"
+          },
+          {
+            "id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+            "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+            "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+            "status": "cancelled",
+            "registered_at": "2026-10-27T10:16:55.454149+00:00"
+          },
+          {
+            "id": "9022b943-ce92-4c40-92e3-d5d960284add",
+            "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+            "user_id": "9f9167cb-95e3-a43c-41cc-8982ab6a8ee6",
+            "status": "attended",
+            "registered_at": "2026-10-27T10:15:23.659092+00:00"
+          },
+          {
+            "id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+            "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+            "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+            "status": "registered",
+            "registered_at": "2026-10-27T10:16:55.713754+00:00"
+          }
+        ],
+        "studentA": "9f9167cb-95e3-a43c-41cc-8982ab6a8ee6",
+        "studentB": "2dc062f2-85c3-e263-962d-f48c0ebb68c0"
+      }
+    },
+    {
+      "id": "PART-C",
+      "at": "2026-10-27T10:22:04.992Z",
+      "action": "Observe future-event check-in and network validation round-trip.",
+      "expected": "Report only; team timing/window assumptions are not failure thresholds.",
+      "observed": {
+        "event": "2026-11-30T02:00:00+00:00",
+        "checkIn": "2026-10-27T10:20:51.986557+00:00",
+        "roundTrips": [
+          {
+            "name": "repeat",
+            "durationMs": 304,
+            "data": "Already checked in",
+            "error": null,
+            "status": 200
+          },
+          {
+            "name": "wrong-event",
+            "durationMs": 234,
+            "data": null,
+            "error": {
+              "code": "P0001",
+              "message": "Wrong event: this ticket belongs to another event."
+            },
+            "status": 400
+          },
+          {
+            "name": "unreadable",
+            "durationMs": 282,
+            "data": null,
+            "error": {
+              "code": "P0001",
+              "message": "Invalid ticket: malformed QR payload."
+            },
+            "status": 400
+          }
+        ],
+        "displayedPayload": {
+          "version": 1,
+          "eventId": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registrationId": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "ticketId": "b0a0f5c5-f60c-4ccc-bb50-699eafc25f08"
+        }
+      }
+    },
+    {
+      "id": "TCND-12",
+      "at": "2026-10-27T10:22:47.171Z",
+      "action": "Present issued A ticket after event cancellation.",
+      "expected": "Refused distinctly from wrong-event; earlier registrations, tickets and attendance retained.",
+      "observed": {
+        "response": {
+          "data": null,
+          "error": {
+            "code": "P0001",
+            "message": "Check-in is unavailable for this event."
+          },
+          "status": 400
+        },
+        "registrations": [
+          {
+            "id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+            "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+            "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+            "status": "cancelled",
+            "registered_at": "2026-10-27T10:16:55.454149+00:00"
+          },
+          {
+            "id": "9022b943-ce92-4c40-92e3-d5d960284add",
+            "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+            "user_id": "9f9167cb-95e3-a43c-41cc-8982ab6a8ee6",
+            "status": "attended",
+            "registered_at": "2026-10-27T10:15:23.659092+00:00"
+          }
+        ],
+        "tickets": [
+          {
+            "id": "74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3",
+            "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+            "registration_id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+            "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"7c057a1c-b31c-44e9-a7f6-f904a38849d4\", \"ticketId\" : \"74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3\"}"
+          },
+          {
+            "id": "b0a0f5c5-f60c-4ccc-bb50-699eafc25f08",
+            "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+            "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+            "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"9022b943-ce92-4c40-92e3-d5d960284add\", \"ticketId\" : \"b0a0f5c5-f60c-4ccc-bb50-699eafc25f08\"}"
+          }
+        ],
+        "attendance": [
+          {
+            "id": "ac87f93a-26dd-4dd6-9977-810a035f6205",
+            "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+            "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+            "checked_in_by": "de1c8b82-fe3f-c0eb-3e12-73ed2775c9c6",
+            "checked_in_at": "2026-10-27T10:20:51.986557+00:00"
+          }
+        ]
+      }
+    },
+    {
+      "id": "A1.1",
+      "at": "2026-10-27T10:24:36.434Z",
+      "action": "Look for the synthetic browser signup profile after its reported errors.",
+      "expected": "Record role only if signup actually created a profile.",
+      "observed": []
+    },
+    {
+      "id": "FINAL",
+      "at": "2026-10-27T10:24:37.908Z",
+      "action": "Read final retained fixture invariants.",
+      "expected": "Capacity never exceeded; counts reconcile with issued registrations.",
+      "observed": [
+        {
+          "event": "QA Audit 2026-10-27 Event A",
+          "id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "capacity": 3,
+          "status": "cancelled",
+          "accepted": 1,
+          "remaining": 2,
+          "attendance": 1
+        },
+        {
+          "event": "QA Audit 2026-10-27 Event B",
+          "id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "capacity": 3,
+          "status": "open",
+          "accepted": 1,
+          "remaining": 2,
+          "attendance": 0
+        },
+        {
+          "event": "QA Audit 2026-10-27 Last Seat",
+          "id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "capacity": 1,
+          "status": "open",
+          "accepted": 1,
+          "remaining": 0,
+          "attendance": 0
+        }
+      ]
+    },
+    {
+      "id": "TCND-09",
+      "at": "2026-10-27T10:30:36.143Z",
+      "action": "Cross-check failed Org 2 browser capacity submissions.",
+      "expected": "No invalid Org 2 event persisted.",
+      "observed": []
+    },
+    {
+      "id": "A1.1",
+      "at": "2026-10-27T10:30:37.983Z",
+      "action": "Look for the synthetic browser signup profile after its reported errors.",
+      "expected": "Record role only if signup actually created a profile.",
+      "observed": []
+    },
+    {
+      "id": "FINAL",
+      "at": "2026-10-27T10:30:40.188Z",
+      "action": "Read final retained fixture invariants.",
+      "expected": "Capacity never exceeded; counts reconcile with issued registrations.",
+      "observed": [
+        {
+          "event": "QA Audit 2026-10-27 Event A",
+          "id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "capacity": 3,
+          "status": "cancelled",
+          "accepted": 1,
+          "remaining": 2,
+          "attendance": 1
+        },
+        {
+          "event": "QA Audit 2026-10-27 Event B",
+          "id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "capacity": 3,
+          "status": "open",
+          "accepted": 1,
+          "remaining": 2,
+          "attendance": 0
+        },
+        {
+          "event": "QA Audit 2026-10-27 Last Seat",
+          "id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "capacity": 1,
+          "status": "open",
+          "accepted": 1,
+          "remaining": 0,
+          "attendance": 0
+        }
+      ]
+    }
+  ],
+  "snapshots": [
+    {
+      "label": "before student UI registration",
+      "at": "2026-10-27T10:14:44.714Z",
+      "events": [
+        {
+          "id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "title": "QA Audit 2026-10-27 Event A",
+          "venue": "QA Test Hall A Edited",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "open"
+        },
+        {
+          "id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "title": "QA Audit 2026-10-27 Event B",
+          "venue": "QA Test Hall Event B",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "open"
+        },
+        {
+          "id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "title": "QA Audit 2026-10-27 Last Seat",
+          "venue": "QA Test Hall Last Seat",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 1,
+          "status": "open"
+        }
+      ],
+      "registrations": [],
+      "tickets": [],
+      "attendance": [],
+      "counts": [
+        {
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "accepted_count": 0
+        },
+        {
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "accepted_count": 0
+        },
+        {
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "accepted_count": 0
+        }
+      ]
+    },
+    {
+      "label": "after Student A browser registration",
+      "at": "2026-10-27T10:16:54.900Z",
+      "events": [
+        {
+          "id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "title": "QA Audit 2026-10-27 Event A",
+          "venue": "QA Test Hall A Edited",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "open"
+        },
+        {
+          "id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "title": "QA Audit 2026-10-27 Event B",
+          "venue": "QA Test Hall Event B",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "open"
+        },
+        {
+          "id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "title": "QA Audit 2026-10-27 Last Seat",
+          "venue": "QA Test Hall Last Seat",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 1,
+          "status": "open"
+        }
+      ],
+      "registrations": [
+        {
+          "id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "9f9167cb-95e3-a43c-41cc-8982ab6a8ee6",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:15:23.659092+00:00"
+        }
+      ],
+      "tickets": [
+        {
+          "id": "b0a0f5c5-f60c-4ccc-bb50-699eafc25f08",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"9022b943-ce92-4c40-92e3-d5d960284add\", \"ticketId\" : \"b0a0f5c5-f60c-4ccc-bb50-699eafc25f08\"}"
+        }
+      ],
+      "attendance": [],
+      "counts": [
+        {
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "accepted_count": 0
+        },
+        {
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "accepted_count": 0
+        },
+        {
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "accepted_count": 1
+        }
+      ]
+    },
+    {
+      "label": "last-seat concurrent requests and capacity-plus-one",
+      "at": "2026-10-27T10:16:58.334Z",
+      "events": [
+        {
+          "id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "title": "QA Audit 2026-10-27 Event A",
+          "venue": "QA Test Hall A Edited",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "open"
+        },
+        {
+          "id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "title": "QA Audit 2026-10-27 Event B",
+          "venue": "QA Test Hall Event B",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "open"
+        },
+        {
+          "id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "title": "QA Audit 2026-10-27 Last Seat",
+          "venue": "QA Test Hall Last Seat",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 1,
+          "status": "open"
+        }
+      ],
+      "registrations": [
+        {
+          "id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.992083+00:00"
+        },
+        {
+          "id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.454149+00:00"
+        },
+        {
+          "id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "9f9167cb-95e3-a43c-41cc-8982ab6a8ee6",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:15:23.659092+00:00"
+        },
+        {
+          "id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.713754+00:00"
+        }
+      ],
+      "tickets": [
+        {
+          "id": "6b0d9e91-a253-4150-8fb0-2518428616cb",
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "registration_id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+          "payload": "{\"version\" : 1, \"eventId\" : \"b0f21efd-ea16-4a04-aeee-bc090e7dd612\", \"registrationId\" : \"3f3f2f08-cff0-4355-8b80-b73f163d1d17\", \"ticketId\" : \"6b0d9e91-a253-4150-8fb0-2518428616cb\"}"
+        },
+        {
+          "id": "74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"7c057a1c-b31c-44e9-a7f6-f904a38849d4\", \"ticketId\" : \"74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3\"}"
+        },
+        {
+          "id": "b0a0f5c5-f60c-4ccc-bb50-699eafc25f08",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"9022b943-ce92-4c40-92e3-d5d960284add\", \"ticketId\" : \"b0a0f5c5-f60c-4ccc-bb50-699eafc25f08\"}"
+        },
+        {
+          "id": "f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b",
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "registration_id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+          "payload": "{\"version\" : 1, \"eventId\" : \"9424cf48-5e84-4c7b-b0cc-30ed04effb0a\", \"registrationId\" : \"cd36c29d-87b5-4b00-80f9-6d36cc0f8888\", \"ticketId\" : \"f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b\"}"
+        }
+      ],
+      "attendance": [],
+      "counts": [
+        {
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "accepted_count": 1
+        },
+        {
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "accepted_count": 1
+        },
+        {
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "accepted_count": 2
+        }
+      ]
+    },
+    {
+      "label": "after cancelling Student B registration in A",
+      "at": "2026-10-27T10:16:59.957Z",
+      "events": [
+        {
+          "id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "title": "QA Audit 2026-10-27 Event A",
+          "venue": "QA Test Hall A Edited",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "open"
+        },
+        {
+          "id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "title": "QA Audit 2026-10-27 Event B",
+          "venue": "QA Test Hall Event B",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "open"
+        },
+        {
+          "id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "title": "QA Audit 2026-10-27 Last Seat",
+          "venue": "QA Test Hall Last Seat",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 1,
+          "status": "open"
+        }
+      ],
+      "registrations": [
+        {
+          "id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.992083+00:00"
+        },
+        {
+          "id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "cancelled",
+          "registered_at": "2026-10-27T10:16:55.454149+00:00"
+        },
+        {
+          "id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "9f9167cb-95e3-a43c-41cc-8982ab6a8ee6",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:15:23.659092+00:00"
+        },
+        {
+          "id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.713754+00:00"
+        }
+      ],
+      "tickets": [
+        {
+          "id": "6b0d9e91-a253-4150-8fb0-2518428616cb",
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "registration_id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+          "payload": "{\"version\" : 1, \"eventId\" : \"b0f21efd-ea16-4a04-aeee-bc090e7dd612\", \"registrationId\" : \"3f3f2f08-cff0-4355-8b80-b73f163d1d17\", \"ticketId\" : \"6b0d9e91-a253-4150-8fb0-2518428616cb\"}"
+        },
+        {
+          "id": "74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"7c057a1c-b31c-44e9-a7f6-f904a38849d4\", \"ticketId\" : \"74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3\"}"
+        },
+        {
+          "id": "b0a0f5c5-f60c-4ccc-bb50-699eafc25f08",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"9022b943-ce92-4c40-92e3-d5d960284add\", \"ticketId\" : \"b0a0f5c5-f60c-4ccc-bb50-699eafc25f08\"}"
+        },
+        {
+          "id": "f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b",
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "registration_id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+          "payload": "{\"version\" : 1, \"eventId\" : \"9424cf48-5e84-4c7b-b0cc-30ed04effb0a\", \"registrationId\" : \"cd36c29d-87b5-4b00-80f9-6d36cc0f8888\", \"ticketId\" : \"f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b\"}"
+        }
+      ],
+      "attendance": [],
+      "counts": [
+        {
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "accepted_count": 1
+        },
+        {
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "accepted_count": 1
+        },
+        {
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "accepted_count": 1
+        }
+      ]
+    },
+    {
+      "label": "before scanner UI sequence",
+      "at": "2026-10-27T10:17:02.269Z",
+      "events": [
+        {
+          "id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "title": "QA Audit 2026-10-27 Event A",
+          "venue": "QA Test Hall A Edited",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "open"
+        },
+        {
+          "id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "title": "QA Audit 2026-10-27 Event B",
+          "venue": "QA Test Hall Event B",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "open"
+        },
+        {
+          "id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "title": "QA Audit 2026-10-27 Last Seat",
+          "venue": "QA Test Hall Last Seat",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 1,
+          "status": "open"
+        }
+      ],
+      "registrations": [
+        {
+          "id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.992083+00:00"
+        },
+        {
+          "id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "cancelled",
+          "registered_at": "2026-10-27T10:16:55.454149+00:00"
+        },
+        {
+          "id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "9f9167cb-95e3-a43c-41cc-8982ab6a8ee6",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:15:23.659092+00:00"
+        },
+        {
+          "id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.713754+00:00"
+        }
+      ],
+      "tickets": [
+        {
+          "id": "6b0d9e91-a253-4150-8fb0-2518428616cb",
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "registration_id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+          "payload": "{\"version\" : 1, \"eventId\" : \"b0f21efd-ea16-4a04-aeee-bc090e7dd612\", \"registrationId\" : \"3f3f2f08-cff0-4355-8b80-b73f163d1d17\", \"ticketId\" : \"6b0d9e91-a253-4150-8fb0-2518428616cb\"}"
+        },
+        {
+          "id": "74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"7c057a1c-b31c-44e9-a7f6-f904a38849d4\", \"ticketId\" : \"74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3\"}"
+        },
+        {
+          "id": "b0a0f5c5-f60c-4ccc-bb50-699eafc25f08",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"9022b943-ce92-4c40-92e3-d5d960284add\", \"ticketId\" : \"b0a0f5c5-f60c-4ccc-bb50-699eafc25f08\"}"
+        },
+        {
+          "id": "f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b",
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "registration_id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+          "payload": "{\"version\" : 1, \"eventId\" : \"9424cf48-5e84-4c7b-b0cc-30ed04effb0a\", \"registrationId\" : \"cd36c29d-87b5-4b00-80f9-6d36cc0f8888\", \"ticketId\" : \"f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b\"}"
+        }
+      ],
+      "attendance": [],
+      "counts": [
+        {
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "accepted_count": 1
+        },
+        {
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "accepted_count": 1
+        },
+        {
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "accepted_count": 1
+        }
+      ]
+    },
+    {
+      "label": "after four-outcome browser scanner sequence",
+      "at": "2026-10-27T10:22:01.641Z",
+      "events": [
+        {
+          "id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "title": "QA Audit 2026-10-27 Event A",
+          "venue": "QA Test Hall A Edited",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "open"
+        },
+        {
+          "id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "title": "QA Audit 2026-10-27 Event B",
+          "venue": "QA Test Hall Event B",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "open"
+        },
+        {
+          "id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "title": "QA Audit 2026-10-27 Last Seat",
+          "venue": "QA Test Hall Last Seat",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 1,
+          "status": "open"
+        }
+      ],
+      "registrations": [
+        {
+          "id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.992083+00:00"
+        },
+        {
+          "id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "cancelled",
+          "registered_at": "2026-10-27T10:16:55.454149+00:00"
+        },
+        {
+          "id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "9f9167cb-95e3-a43c-41cc-8982ab6a8ee6",
+          "status": "attended",
+          "registered_at": "2026-10-27T10:15:23.659092+00:00"
+        },
+        {
+          "id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.713754+00:00"
+        }
+      ],
+      "tickets": [
+        {
+          "id": "6b0d9e91-a253-4150-8fb0-2518428616cb",
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "registration_id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+          "payload": "{\"version\" : 1, \"eventId\" : \"b0f21efd-ea16-4a04-aeee-bc090e7dd612\", \"registrationId\" : \"3f3f2f08-cff0-4355-8b80-b73f163d1d17\", \"ticketId\" : \"6b0d9e91-a253-4150-8fb0-2518428616cb\"}"
+        },
+        {
+          "id": "74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"7c057a1c-b31c-44e9-a7f6-f904a38849d4\", \"ticketId\" : \"74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3\"}"
+        },
+        {
+          "id": "b0a0f5c5-f60c-4ccc-bb50-699eafc25f08",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"9022b943-ce92-4c40-92e3-d5d960284add\", \"ticketId\" : \"b0a0f5c5-f60c-4ccc-bb50-699eafc25f08\"}"
+        },
+        {
+          "id": "f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b",
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "registration_id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+          "payload": "{\"version\" : 1, \"eventId\" : \"9424cf48-5e84-4c7b-b0cc-30ed04effb0a\", \"registrationId\" : \"cd36c29d-87b5-4b00-80f9-6d36cc0f8888\", \"ticketId\" : \"f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b\"}"
+        }
+      ],
+      "attendance": [
+        {
+          "id": "ac87f93a-26dd-4dd6-9977-810a035f6205",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "checked_in_by": "de1c8b82-fe3f-c0eb-3e12-73ed2775c9c6",
+          "checked_in_at": "2026-10-27T10:20:51.986557+00:00"
+        }
+      ],
+      "counts": [
+        {
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "accepted_count": 1
+        },
+        {
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "accepted_count": 1
+        },
+        {
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "accepted_count": 1
+        }
+      ]
+    },
+    {
+      "label": "after repeated scans on independent organizer sessions",
+      "at": "2026-10-27T10:22:04.170Z",
+      "events": [
+        {
+          "id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "title": "QA Audit 2026-10-27 Event A",
+          "venue": "QA Test Hall A Edited",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "open"
+        },
+        {
+          "id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "title": "QA Audit 2026-10-27 Event B",
+          "venue": "QA Test Hall Event B",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "open"
+        },
+        {
+          "id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "title": "QA Audit 2026-10-27 Last Seat",
+          "venue": "QA Test Hall Last Seat",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 1,
+          "status": "open"
+        }
+      ],
+      "registrations": [
+        {
+          "id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.992083+00:00"
+        },
+        {
+          "id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "cancelled",
+          "registered_at": "2026-10-27T10:16:55.454149+00:00"
+        },
+        {
+          "id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "9f9167cb-95e3-a43c-41cc-8982ab6a8ee6",
+          "status": "attended",
+          "registered_at": "2026-10-27T10:15:23.659092+00:00"
+        },
+        {
+          "id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.713754+00:00"
+        }
+      ],
+      "tickets": [
+        {
+          "id": "6b0d9e91-a253-4150-8fb0-2518428616cb",
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "registration_id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+          "payload": "{\"version\" : 1, \"eventId\" : \"b0f21efd-ea16-4a04-aeee-bc090e7dd612\", \"registrationId\" : \"3f3f2f08-cff0-4355-8b80-b73f163d1d17\", \"ticketId\" : \"6b0d9e91-a253-4150-8fb0-2518428616cb\"}"
+        },
+        {
+          "id": "74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"7c057a1c-b31c-44e9-a7f6-f904a38849d4\", \"ticketId\" : \"74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3\"}"
+        },
+        {
+          "id": "b0a0f5c5-f60c-4ccc-bb50-699eafc25f08",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"9022b943-ce92-4c40-92e3-d5d960284add\", \"ticketId\" : \"b0a0f5c5-f60c-4ccc-bb50-699eafc25f08\"}"
+        },
+        {
+          "id": "f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b",
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "registration_id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+          "payload": "{\"version\" : 1, \"eventId\" : \"9424cf48-5e84-4c7b-b0cc-30ed04effb0a\", \"registrationId\" : \"cd36c29d-87b5-4b00-80f9-6d36cc0f8888\", \"ticketId\" : \"f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b\"}"
+        }
+      ],
+      "attendance": [
+        {
+          "id": "ac87f93a-26dd-4dd6-9977-810a035f6205",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "checked_in_by": "de1c8b82-fe3f-c0eb-3e12-73ed2775c9c6",
+          "checked_in_at": "2026-10-27T10:20:51.986557+00:00"
+        }
+      ],
+      "counts": [
+        {
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "accepted_count": 1
+        },
+        {
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "accepted_count": 1
+        },
+        {
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "accepted_count": 1
+        }
+      ]
+    },
+    {
+      "label": "after organizer browser event cancellation",
+      "at": "2026-10-27T10:22:45.475Z",
+      "events": [
+        {
+          "id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "title": "QA Audit 2026-10-27 Event A",
+          "venue": "QA Test Hall A Edited",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "cancelled"
+        },
+        {
+          "id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "title": "QA Audit 2026-10-27 Event B",
+          "venue": "QA Test Hall Event B",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "open"
+        },
+        {
+          "id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "title": "QA Audit 2026-10-27 Last Seat",
+          "venue": "QA Test Hall Last Seat",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 1,
+          "status": "open"
+        }
+      ],
+      "registrations": [
+        {
+          "id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.992083+00:00"
+        },
+        {
+          "id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "cancelled",
+          "registered_at": "2026-10-27T10:16:55.454149+00:00"
+        },
+        {
+          "id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "9f9167cb-95e3-a43c-41cc-8982ab6a8ee6",
+          "status": "attended",
+          "registered_at": "2026-10-27T10:15:23.659092+00:00"
+        },
+        {
+          "id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.713754+00:00"
+        }
+      ],
+      "tickets": [
+        {
+          "id": "6b0d9e91-a253-4150-8fb0-2518428616cb",
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "registration_id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+          "payload": "{\"version\" : 1, \"eventId\" : \"b0f21efd-ea16-4a04-aeee-bc090e7dd612\", \"registrationId\" : \"3f3f2f08-cff0-4355-8b80-b73f163d1d17\", \"ticketId\" : \"6b0d9e91-a253-4150-8fb0-2518428616cb\"}"
+        },
+        {
+          "id": "74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"7c057a1c-b31c-44e9-a7f6-f904a38849d4\", \"ticketId\" : \"74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3\"}"
+        },
+        {
+          "id": "b0a0f5c5-f60c-4ccc-bb50-699eafc25f08",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"9022b943-ce92-4c40-92e3-d5d960284add\", \"ticketId\" : \"b0a0f5c5-f60c-4ccc-bb50-699eafc25f08\"}"
+        },
+        {
+          "id": "f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b",
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "registration_id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+          "payload": "{\"version\" : 1, \"eventId\" : \"9424cf48-5e84-4c7b-b0cc-30ed04effb0a\", \"registrationId\" : \"cd36c29d-87b5-4b00-80f9-6d36cc0f8888\", \"ticketId\" : \"f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b\"}"
+        }
+      ],
+      "attendance": [
+        {
+          "id": "ac87f93a-26dd-4dd6-9977-810a035f6205",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "checked_in_by": "de1c8b82-fe3f-c0eb-3e12-73ed2775c9c6",
+          "checked_in_at": "2026-10-27T10:20:51.986557+00:00"
+        }
+      ],
+      "counts": [
+        {
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "accepted_count": 1
+        },
+        {
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "accepted_count": 1
+        },
+        {
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "accepted_count": 1
+        }
+      ]
+    },
+    {
+      "label": "cancelled event ticket rejection",
+      "at": "2026-10-27T10:22:47.171Z",
+      "events": [
+        {
+          "id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "title": "QA Audit 2026-10-27 Event A",
+          "venue": "QA Test Hall A Edited",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "cancelled"
+        },
+        {
+          "id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "title": "QA Audit 2026-10-27 Event B",
+          "venue": "QA Test Hall Event B",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "open"
+        },
+        {
+          "id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "title": "QA Audit 2026-10-27 Last Seat",
+          "venue": "QA Test Hall Last Seat",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 1,
+          "status": "open"
+        }
+      ],
+      "registrations": [
+        {
+          "id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.992083+00:00"
+        },
+        {
+          "id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "cancelled",
+          "registered_at": "2026-10-27T10:16:55.454149+00:00"
+        },
+        {
+          "id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "9f9167cb-95e3-a43c-41cc-8982ab6a8ee6",
+          "status": "attended",
+          "registered_at": "2026-10-27T10:15:23.659092+00:00"
+        },
+        {
+          "id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.713754+00:00"
+        }
+      ],
+      "tickets": [
+        {
+          "id": "6b0d9e91-a253-4150-8fb0-2518428616cb",
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "registration_id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+          "payload": "{\"version\" : 1, \"eventId\" : \"b0f21efd-ea16-4a04-aeee-bc090e7dd612\", \"registrationId\" : \"3f3f2f08-cff0-4355-8b80-b73f163d1d17\", \"ticketId\" : \"6b0d9e91-a253-4150-8fb0-2518428616cb\"}"
+        },
+        {
+          "id": "74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"7c057a1c-b31c-44e9-a7f6-f904a38849d4\", \"ticketId\" : \"74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3\"}"
+        },
+        {
+          "id": "b0a0f5c5-f60c-4ccc-bb50-699eafc25f08",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"9022b943-ce92-4c40-92e3-d5d960284add\", \"ticketId\" : \"b0a0f5c5-f60c-4ccc-bb50-699eafc25f08\"}"
+        },
+        {
+          "id": "f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b",
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "registration_id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+          "payload": "{\"version\" : 1, \"eventId\" : \"9424cf48-5e84-4c7b-b0cc-30ed04effb0a\", \"registrationId\" : \"cd36c29d-87b5-4b00-80f9-6d36cc0f8888\", \"ticketId\" : \"f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b\"}"
+        }
+      ],
+      "attendance": [
+        {
+          "id": "ac87f93a-26dd-4dd6-9977-810a035f6205",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "checked_in_by": "de1c8b82-fe3f-c0eb-3e12-73ed2775c9c6",
+          "checked_in_at": "2026-10-27T10:20:51.986557+00:00"
+        }
+      ],
+      "counts": [
+        {
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "accepted_count": 1
+        },
+        {
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "accepted_count": 1
+        },
+        {
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "accepted_count": 1
+        }
+      ]
+    },
+    {
+      "label": "final retained QA evidence",
+      "at": "2026-10-27T10:24:37.908Z",
+      "events": [
+        {
+          "id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "title": "QA Audit 2026-10-27 Event A",
+          "venue": "QA Test Hall A Edited",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "cancelled"
+        },
+        {
+          "id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "title": "QA Audit 2026-10-27 Event B",
+          "venue": "QA Test Hall Event B",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "open"
+        },
+        {
+          "id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "title": "QA Audit 2026-10-27 Last Seat",
+          "venue": "QA Test Hall Last Seat",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 1,
+          "status": "open"
+        }
+      ],
+      "registrations": [
+        {
+          "id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.992083+00:00"
+        },
+        {
+          "id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "cancelled",
+          "registered_at": "2026-10-27T10:16:55.454149+00:00"
+        },
+        {
+          "id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "9f9167cb-95e3-a43c-41cc-8982ab6a8ee6",
+          "status": "attended",
+          "registered_at": "2026-10-27T10:15:23.659092+00:00"
+        },
+        {
+          "id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.713754+00:00"
+        }
+      ],
+      "tickets": [
+        {
+          "id": "6b0d9e91-a253-4150-8fb0-2518428616cb",
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "registration_id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+          "payload": "{\"version\" : 1, \"eventId\" : \"b0f21efd-ea16-4a04-aeee-bc090e7dd612\", \"registrationId\" : \"3f3f2f08-cff0-4355-8b80-b73f163d1d17\", \"ticketId\" : \"6b0d9e91-a253-4150-8fb0-2518428616cb\"}"
+        },
+        {
+          "id": "74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"7c057a1c-b31c-44e9-a7f6-f904a38849d4\", \"ticketId\" : \"74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3\"}"
+        },
+        {
+          "id": "b0a0f5c5-f60c-4ccc-bb50-699eafc25f08",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"9022b943-ce92-4c40-92e3-d5d960284add\", \"ticketId\" : \"b0a0f5c5-f60c-4ccc-bb50-699eafc25f08\"}"
+        },
+        {
+          "id": "f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b",
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "registration_id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+          "payload": "{\"version\" : 1, \"eventId\" : \"9424cf48-5e84-4c7b-b0cc-30ed04effb0a\", \"registrationId\" : \"cd36c29d-87b5-4b00-80f9-6d36cc0f8888\", \"ticketId\" : \"f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b\"}"
+        }
+      ],
+      "attendance": [
+        {
+          "id": "ac87f93a-26dd-4dd6-9977-810a035f6205",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "checked_in_by": "de1c8b82-fe3f-c0eb-3e12-73ed2775c9c6",
+          "checked_in_at": "2026-10-27T10:20:51.986557+00:00"
+        }
+      ],
+      "counts": [
+        {
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "accepted_count": 1
+        },
+        {
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "accepted_count": 1
+        },
+        {
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "accepted_count": 1
+        }
+      ]
+    },
+    {
+      "label": "final retained QA evidence",
+      "at": "2026-10-27T10:30:40.188Z",
+      "events": [
+        {
+          "id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "title": "QA Audit 2026-10-27 Event A",
+          "venue": "QA Test Hall A Edited",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "cancelled"
+        },
+        {
+          "id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "title": "QA Audit 2026-10-27 Event B",
+          "venue": "QA Test Hall Event B",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 3,
+          "status": "open"
+        },
+        {
+          "id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "title": "QA Audit 2026-10-27 Last Seat",
+          "venue": "QA Test Hall Last Seat",
+          "start_at": "2026-11-30T02:00:00+00:00",
+          "end_at": null,
+          "registration_deadline": null,
+          "capacity": 1,
+          "status": "open"
+        }
+      ],
+      "registrations": [
+        {
+          "id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.992083+00:00"
+        },
+        {
+          "id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "cancelled",
+          "registered_at": "2026-10-27T10:16:55.454149+00:00"
+        },
+        {
+          "id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "user_id": "9f9167cb-95e3-a43c-41cc-8982ab6a8ee6",
+          "status": "attended",
+          "registered_at": "2026-10-27T10:15:23.659092+00:00"
+        },
+        {
+          "id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+          "status": "registered",
+          "registered_at": "2026-10-27T10:16:55.713754+00:00"
+        }
+      ],
+      "tickets": [
+        {
+          "id": "6b0d9e91-a253-4150-8fb0-2518428616cb",
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "registration_id": "3f3f2f08-cff0-4355-8b80-b73f163d1d17",
+          "payload": "{\"version\" : 1, \"eventId\" : \"b0f21efd-ea16-4a04-aeee-bc090e7dd612\", \"registrationId\" : \"3f3f2f08-cff0-4355-8b80-b73f163d1d17\", \"ticketId\" : \"6b0d9e91-a253-4150-8fb0-2518428616cb\"}"
+        },
+        {
+          "id": "74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"7c057a1c-b31c-44e9-a7f6-f904a38849d4\", \"ticketId\" : \"74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3\"}"
+        },
+        {
+          "id": "b0a0f5c5-f60c-4ccc-bb50-699eafc25f08",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"9022b943-ce92-4c40-92e3-d5d960284add\", \"ticketId\" : \"b0a0f5c5-f60c-4ccc-bb50-699eafc25f08\"}"
+        },
+        {
+          "id": "f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b",
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "registration_id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+          "payload": "{\"version\" : 1, \"eventId\" : \"9424cf48-5e84-4c7b-b0cc-30ed04effb0a\", \"registrationId\" : \"cd36c29d-87b5-4b00-80f9-6d36cc0f8888\", \"ticketId\" : \"f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b\"}"
+        }
+      ],
+      "attendance": [
+        {
+          "id": "ac87f93a-26dd-4dd6-9977-810a035f6205",
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+          "checked_in_by": "de1c8b82-fe3f-c0eb-3e12-73ed2775c9c6",
+          "checked_in_at": "2026-10-27T10:20:51.986557+00:00"
+        }
+      ],
+      "counts": [
+        {
+          "event_id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+          "accepted_count": 1
+        },
+        {
+          "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+          "accepted_count": 1
+        },
+        {
+          "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+          "accepted_count": 1
+        }
+      ]
+    }
+  ],
+  "updatedAt": "2026-10-27T10:30:40.188Z"
+}

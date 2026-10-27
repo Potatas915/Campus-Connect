@@ -1,0 +1,101 @@
+{
+  "identities": {
+    "studentA": "9f9167cb-95e3-a43c-41cc-8982ab6a8ee6",
+    "studentB": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+    "org1": "de1c8b82-fe3f-c0eb-3e12-73ed2775c9c6",
+    "org2": "385d52be-2243-3ed8-94ff-d8524ebc73d7",
+    "admin": "67f5e415-6ba2-e1c5-5329-732f044bcb7d"
+  },
+  "accounts": {
+    "studentA": "student12@campus.test",
+    "studentB": "student13@campus.test",
+    "org1": "cict.organizer@campus.test",
+    "org2": "arts.organizer@campus.test",
+    "admin": "cict.admin@campus.test"
+  },
+  "prefix": "QA Audit 2026-10-27",
+  "A": {
+    "id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+    "organization_id": "10000000-0000-4000-8000-000000000001",
+    "title": "QA Audit 2026-10-27 Event A",
+    "description": "Synthetic QA audit fixture. Retain registrations and attendance as audit evidence.",
+    "venue": "QA Test Hall A Edited",
+    "category": "Technology",
+    "start_at": "2026-11-30T02:00:00+00:00",
+    "end_at": null,
+    "registration_deadline": null,
+    "capacity": 3,
+    "status": "open",
+    "banner_url": null,
+    "theme": 3,
+    "created_by": "de1c8b82-fe3f-c0eb-3e12-73ed2775c9c6",
+    "created_at": "2026-10-27T10:11:19.394857+00:00",
+    "updated_at": "2026-10-27T10:11:35.530438+00:00"
+  },
+  "B": {
+    "id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+    "organization_id": "10000000-0000-4000-8000-000000000001",
+    "title": "QA Audit 2026-10-27 Event B",
+    "description": "Synthetic retained audit fixture.",
+    "venue": "QA Test Hall Event B",
+    "category": "Technology",
+    "start_at": "2026-11-30T02:00:00+00:00",
+    "end_at": null,
+    "registration_deadline": null,
+    "capacity": 3,
+    "status": "open",
+    "banner_url": null,
+    "theme": 3,
+    "created_by": "de1c8b82-fe3f-c0eb-3e12-73ed2775c9c6",
+    "created_at": "2026-10-27T10:14:38.329005+00:00",
+    "updated_at": "2026-10-27T10:14:38.649088+00:00"
+  },
+  "race": {
+    "id": "b0f21efd-ea16-4a04-aeee-bc090e7dd612",
+    "organization_id": "10000000-0000-4000-8000-000000000001",
+    "title": "QA Audit 2026-10-27 Last Seat",
+    "description": "Synthetic retained audit fixture.",
+    "venue": "QA Test Hall Last Seat",
+    "category": "Technology",
+    "start_at": "2026-11-30T02:00:00+00:00",
+    "end_at": null,
+    "registration_deadline": null,
+    "capacity": 1,
+    "status": "open",
+    "banner_url": null,
+    "theme": 3,
+    "created_by": "de1c8b82-fe3f-c0eb-3e12-73ed2775c9c6",
+    "created_at": "2026-10-27T10:14:39.027583+00:00",
+    "updated_at": "2026-10-27T10:14:39.337474+00:00"
+  },
+  "studentBA": {
+    "id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+    "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+    "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+    "status": "registered"
+  },
+  "studentBB": {
+    "id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+    "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+    "user_id": "2dc062f2-85c3-e263-962d-f48c0ebb68c0",
+    "status": "registered"
+  },
+  "aTicket": {
+    "id": "b0a0f5c5-f60c-4ccc-bb50-699eafc25f08",
+    "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+    "registration_id": "9022b943-ce92-4c40-92e3-d5d960284add",
+    "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"9022b943-ce92-4c40-92e3-d5d960284add\", \"ticketId\" : \"b0a0f5c5-f60c-4ccc-bb50-699eafc25f08\"}"
+  },
+  "bTicket": {
+    "id": "f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b",
+    "event_id": "9424cf48-5e84-4c7b-b0cc-30ed04effb0a",
+    "registration_id": "cd36c29d-87b5-4b00-80f9-6d36cc0f8888",
+    "payload": "{\"version\" : 1, \"eventId\" : \"9424cf48-5e84-4c7b-b0cc-30ed04effb0a\", \"registrationId\" : \"cd36c29d-87b5-4b00-80f9-6d36cc0f8888\", \"ticketId\" : \"f7dbf4f9-38a9-4369-a44d-bdf1ba5c569b\"}"
+  },
+  "cancelledTicket": {
+    "id": "74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3",
+    "event_id": "a493517f-e8cd-4e48-beb7-a3005e43aaae",
+    "registration_id": "7c057a1c-b31c-44e9-a7f6-f904a38849d4",
+    "payload": "{\"version\" : 1, \"eventId\" : \"a493517f-e8cd-4e48-beb7-a3005e43aaae\", \"registrationId\" : \"7c057a1c-b31c-44e9-a7f6-f904a38849d4\", \"ticketId\" : \"74cc00c7-da1f-4cf0-a1ff-20a1e1424ff3\"}"
+  }
+}
