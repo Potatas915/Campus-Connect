@@ -1,0 +1,31 @@
+{
+  "at": "2026-10-28T21:22:38.701Z",
+  "run": "MTP Core 1793222558701",
+  "browser": "156.0.4314.50",
+  "conditions": {
+    "TCND-01": "Student route redirected; server event creation denied.",
+    "TCND-02": "Concurrent clicks from independent browser contexts: exactly one accepted at capacity 1. Logical sessions on one machine; no physical-device claim.",
+    "TCND-03": "Duplicate refused; stored registration count remains 1.",
+    "TCND-04": "Exactly one ticket with unique UUID and event/registration identity. Malformed rejection exercised in TCND-11.",
+    "TCND-08": "Aborted publication network request preserves accepted registration/ticket; organizer sees pending and publishes by retry. Internal failed-publisher branch proven separately in SQL tests.",
+    "TCND-07": "Held-open organizer report picked up remote terminal check-in without navigation; row and stored attendance reconciled.",
+    "QR-camera-decoder": "Issued QR image decoded through a synthetic canvas video stream, validated as a repeat and camera stopped. Physical camera not certified.",
+    "TCND-05": "Real issued A payload rejected at B with zero B attendance.",
+    "TCND-11": "Valid, repeat, wrong-event, malformed and next valid repeat in one scanner page without restart.",
+    "TCND-06": "Concurrent independent authenticated repeat calls plus UI repeats leave exactly one attendance row.",
+    "TCND-09": "Owned future draft created/edited/opened; cross-organization cancellation returned no writable rows.",
+    "TCND-10": "Held-open details changed from 0 remaining to 1 after API withdrawal, without reload.",
+    "TCND-12": "Cancelled event refusal differs from wrong-event; registration/ticket/attendance history retained."
+  },
+  "events": [
+    {
+      "id": "bd68d843-4e07-43e0-8589-1506cbecd080",
+      "title": "MTP Core 1793222558701 A edited"
+    },
+    {
+      "id": "32270bbb-369b-46cd-a0de-9e071ba47c1b",
+      "title": "MTP Core 1793222558701 B edited"
+    }
+  ],
+  "status": "PASS for executed branches"
+}
