@@ -1,0 +1,29 @@
+{
+  "checks": [
+    {
+      "name": "retained retest fixtures",
+      "at": "2026-10-27T10:51:44.385Z",
+      "data": {
+        "A": "a7139ec8-9da0-4025-8b4b-b6626d36a671",
+        "B": "b7e6909b-8033-4942-97c2-fd2885cfa90e"
+      }
+    },
+    {
+      "name": "independent session filled A",
+      "at": "2026-10-27T10:53:19.479Z",
+      "data": {
+        "id": "c246a43b-5222-4767-b116-1a0f0d4a409c",
+        "event_id": "a7139ec8-9da0-4025-8b4b-b6626d36a671",
+        "status": "registered"
+      }
+    },
+    {
+      "name": "independent session released A",
+      "at": "2026-10-27T10:53:54.534Z",
+      "data": {
+        "id": "c246a43b-5222-4767-b116-1a0f0d4a409c",
+        "status": "cancelled"
+      }
+    }
+  ]
+}

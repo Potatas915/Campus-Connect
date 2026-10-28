@@ -15,6 +15,13 @@ describe('Supabase service error and auth boundaries', () => {
     expect(await service.signup(' Alex ', 'ALEX@EXAMPLE.TEST ', 'test-only')).toEqual({ needsConfirmation: true });
     expect(signUp.mock.calls[0][0]).toMatchObject({ email: 'alex@example.test', options: { data: { full_name: 'Alex' } } });
   });
+  it('supports immediate no-SMTP signup without sending an elevated role', async () => {
+    const signUp = vi.fn().mockResolvedValue({ data: { session: { user: { id: 'new-student' } } }, error: null });
+    vi.mocked(client).mockReturnValue({ auth: { signUp } } as unknown as ReturnType<typeof client>);
+    vi.stubGlobal('window', { location: { origin: 'http://localhost:5173' } });
+    expect(await service.signup('New Student', 'new@example.com', 'test-only')).toEqual({ needsConfirmation: false });
+    expect(signUp.mock.calls[0][0].options.data).toEqual({ full_name: 'New Student' });
+  });
   it('does not read profiles or private data when signed out', async () => {
     vi.mocked(client).mockReturnValue({ auth: { getSession: async () => ({ data: { session: null }, error: null }) } } as unknown as ReturnType<typeof client>);
     expect(await service.session()).toBeNull();

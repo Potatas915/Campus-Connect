@@ -1,0 +1,43 @@
+{
+  "A": {
+    "id": "a7139ec8-9da0-4025-8b4b-b6626d36a671",
+    "organization_id": "10000000-0000-4000-8000-000000000001",
+    "title": "QA Fix Retest 2026-10-27 Availability",
+    "description": "Synthetic retained remediation verification.",
+    "venue": "QA Retest Hall",
+    "category": "Technology",
+    "start_at": "2026-11-30T02:00:00+00:00",
+    "end_at": null,
+    "registration_deadline": null,
+    "capacity": 1,
+    "status": "open",
+    "banner_url": null,
+    "theme": 3,
+    "created_by": "de1c8b82-fe3f-c0eb-3e12-73ed2775c9c6",
+    "created_at": "2026-10-27T10:51:42.757326+00:00",
+    "updated_at": "2026-10-27T10:51:43.116011+00:00"
+  },
+  "B": {
+    "id": "b7e6909b-8033-4942-97c2-fd2885cfa90e",
+    "organization_id": "10000000-0000-4000-8000-000000000001",
+    "title": "QA Fix Retest 2026-10-27 Rejection",
+    "description": "Synthetic retained remediation verification.",
+    "venue": "QA Retest Hall",
+    "category": "Technology",
+    "start_at": "2026-11-30T02:00:00+00:00",
+    "end_at": null,
+    "registration_deadline": null,
+    "capacity": 1,
+    "status": "open",
+    "banner_url": null,
+    "theme": 3,
+    "created_by": "de1c8b82-fe3f-c0eb-3e12-73ed2775c9c6",
+    "created_at": "2026-10-27T10:51:43.41644+00:00",
+    "updated_at": "2026-10-27T10:51:43.710306+00:00"
+  },
+  "registrationA": {
+    "id": "c246a43b-5222-4767-b116-1a0f0d4a409c",
+    "event_id": "a7139ec8-9da0-4025-8b4b-b6626d36a671",
+    "status": "registered"
+  }
+}

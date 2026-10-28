@@ -58,6 +58,10 @@ export const service = {
       users: users.map(profile), counts: Object.fromEntries(counts.map(c => [c.event_id, Number(c.accepted_count)])),
     };
   },
+  async availability() {
+    const [events, counts] = await Promise.all([all('events'), eventCounts()]);
+    return { events: events.map(event), counts: Object.fromEntries(counts.map(c => [c.event_id, Number(c.accepted_count)])) };
+  },
   async listEvents({ query = '', category = 'All events', includePast = false, page = 0, pageSize = 6 } = {}) {
     let request = client().from('events').select('*', { count: 'exact' }).neq('status', 'draft').order('start_at').order('id');
     if (!includePast) request = request.gt('start_at', new Date().toISOString());
@@ -65,8 +69,8 @@ export const service = {
     // PostgREST .or() accepts a grammar; do not interpolate its punctuation.
     const search = query.replace(/[^\p{L}\p{N}\s-]/gu, ' ').trim();
     if (search) request = request.or(`title.ilike.%${search}%,description.ilike.%${search}%,venue.ilike.%${search}%`);
-    const result = await request.range(page * pageSize, (page + 1) * pageSize - 1);
-    return { events: checked(result).map(event), total: result.count ?? 0 };
+    const [result, counts] = await Promise.all([request.range(page * pageSize, (page + 1) * pageSize - 1), eventCounts()]);
+    return { events: checked(result).map(event), total: result.count ?? 0, counts: Object.fromEntries(counts.map(c => [c.event_id, Number(c.accepted_count)])) };
   },
   async register(eventId: string) {
     const user = await service.session();
