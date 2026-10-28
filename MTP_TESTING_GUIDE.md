@@ -1,10 +1,22 @@
+## Core MTP completion — 2026-10-29
+
+The current app has real browser camera scanning plus an exact-payload paste fallback, durable portal confirmations, organizer confirmation retry and five-second attendance-report refresh. `src/main.tsx` is the bootstrap; screens live in `src/App.tsx` and focused feature modules. Application commands run in `Campus-Connect/`; database commands run in the parent containing `supabase/`.
+
+Apply all versioned migrations, including `20261029010000_registration_notifications.sql`, before running the current app. The new migration preserves registrations/tickets, queues one confirmation for each eligible historical registration and skips cancelled history. Publication is a separate authenticated RPC: a network/publisher failure leaves registration accepted and notification pending/failed. Students see confirmations in My tickets; organizers see pending/failed items and Retry confirmation on their dashboard. These are portal messages; no email/push delivery or public failure-simulation switch is included.
+
+Camera access requires HTTPS or localhost and explicit Start camera. Stop camera, navigation and logout release streams. Validate QR accepts the exact contents of an issued ticket, including input from an external decoder; it never bypasses server validation. After a camera result select Scan next. Reports retain their last loaded records on refresh failure and show recovery guidance; they poll every five seconds and offer Refresh report.
+
+The nested `Campus-Connect/` Git repository exists on this device. Prior notes about absent Git, `website/`, simulation-only scanning and the initial seat-refresh defect are historical. QR signing/expiry/time-window rules, offline queues, payment and native mobile work remain outside the selected core scope.
+
+Run `npm.cmd test`, `npm.cmd run lint` and `npm.cmd run build`. The SQL harness can also load a pre-upgrade migration boundary to prove data-preserving backfill. Browser checks use Playwright with installed Microsoft Edge (`msedge`); browser/port configuration is in `playwright.config.ts`. For the designated seeded development backend only, run `$env:MTP_DEVELOPMENT_TEST='1'; npm.cmd run test:e2e`. This creates new synthetic fixture events/registrations and reserved example.com signup accounts and retains them as evidence. It never deletes, resets or reseeds. Do not enable it against production. Browser traces/storage states are not saved. See `qa-audit/2026-10-29/ACCEPTANCE.md` for actual results and limits.
+
 # Current Supabase verification — 2026-10-27
 
 The website now uses hosted Supabase Auth/PostgreSQL. The older guide below was written for browser-local demo storage; its accounts, storage inspection, reset and concurrency limitations are historical. Use this section and README.md for current setup. The MTP requirement/risk ambiguities and full-campaign evidence requirements still apply.
 
 ## Current checks
 
-Inside `website/`, run `npm.cmd test`, `npm.cmd run lint`, and `npm.cmd run build`. These cover the SQL migration/RLS/seed and service boundaries. `npm.cmd run db:types` generates types from a fresh migration-applied local SQL catalog; the checked-in hosted types can instead be regenerated with the official CLI command in README.md.
+Inside `Campus-Connect/`, run `npm.cmd test`, `npm.cmd run lint`, and `npm.cmd run build`. These cover the SQL migration/RLS/seed and service boundaries. `npm.cmd run db:types` generates types from a fresh migration-applied local SQL catalog; the checked-in hosted types can instead be regenerated with the official CLI command in README.md.
 
 For an explicitly seeded development project, `node scripts/verify-hosted.mjs --development-test` runs hosted Auth/API checks with independent clients. It creates one named integration event, retains its registration/ticket/attendance evidence, then cancels the event. It does not delete records. Never point this script at a production project.
 

@@ -2,7 +2,7 @@ import { PGlite } from '@electric-sql/pglite';
 import { pgcrypto } from '@electric-sql/pglite/contrib/pgcrypto';
 import { readFile, readdir } from 'node:fs/promises';
 
-export async function testDatabase() {
+export async function testDatabase({ through } = {}) {
   const db = new PGlite({ extensions: { pgcrypto } });
   // Supabase supplies auth.users/auth.uid()/API roles. This local harness supplies
   // only their SQL boundary; it does not pretend to run GoTrue or PostgREST.
@@ -25,6 +25,7 @@ export async function testDatabase() {
   `);
   const directory = new URL('../../supabase/migrations/', import.meta.url);
   for (const name of (await readdir(directory)).filter(n => n.endsWith('.sql')).sort()) {
+    if (through && name.slice(0, 14) > through) continue;
     await db.exec(await readFile(new URL(name, directory), 'utf8'));
   }
   return db;

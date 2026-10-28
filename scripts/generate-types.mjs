@@ -24,6 +24,7 @@ try {
   source += `}; Views: Record<never, never>; Functions: {
   event_counts: { Args: Record<never, never>; Returns: { event_id: string; accepted_count: number }[] };
   scan_ticket: { Args: { selected_event: string; qr_payload: string }; Returns: string };
+  publish_confirmation: { Args: { registration: string }; Returns: string };
 }; Enums: Record<never, never>; CompositeTypes: Record<never, never>; } };\n`;
   await writeFile(new URL('../src/database.types.ts', import.meta.url), source);
   console.log('Generated TypeScript table types from the applied local migration catalog.');

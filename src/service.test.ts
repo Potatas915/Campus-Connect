@@ -32,4 +32,15 @@ describe('Supabase service error and auth boundaries', () => {
     expect(await service.scan('event', 'opaque-payload')).toBe('Already checked in');
     expect(rpc).toHaveBeenCalledWith('scan_ticket', { selected_event: 'event', qr_payload: 'opaque-payload' });
   });
+  it('keeps registration accepted when confirmation publication loses its reply', async () => {
+    const session = vi.spyOn(service, 'session').mockResolvedValue({ id: 'student', name: 'Student', email: 'a@example.test', role: 'student' });
+    const insert = vi.fn(() => ({ select: () => ({ single: async () => ({ data: { id: 'registration' }, error: null }) }) }));
+    const rpc = vi.fn().mockRejectedValue(new Error('Network lost'));
+    vi.mocked(client).mockReturnValue({ from: () => ({ insert }), rpc } as unknown as ReturnType<typeof client>);
+    try {
+      expect(await service.register('event')).toContain('Registration accepted');
+      expect(insert).toHaveBeenCalledTimes(1);
+      expect(rpc).toHaveBeenCalledWith('publish_confirmation', { registration: 'registration' });
+    } finally { session.mockRestore(); }
+  });
 });

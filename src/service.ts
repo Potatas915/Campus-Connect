@@ -8,7 +8,8 @@ export type Event = { id: string; organizationId: string; title: string; descrip
 export type Registration = { id: string; studentId: string; eventId: string; status: 'registered' | 'cancelled' | 'attended'; createdAt: string };
 export type Ticket = { id: string; registrationId: string; eventId: string; payload: string };
 export type Attendance = { id: string; registrationId: string; eventId: string; scannedAt: string };
-export type Snapshot = { organizations: Organization[]; events: Event[]; registrations: Registration[]; tickets: Ticket[]; attendance: Attendance[]; users: User[]; counts: Record<string, number> };
+export type Confirmation = { registrationId: string; eventId: string; status: 'pending' | 'ready' | 'failed' | 'inactive'; message: string | null; error: string | null };
+export type Snapshot = { organizations: Organization[]; events: Event[]; registrations: Registration[]; tickets: Ticket[]; attendance: Attendance[]; users: User[]; counts: Record<string, number>; notifications: Confirmation[] };
 const profile = (p: Row<'profiles'>): User => ({ id: p.id, name: p.full_name, email: p.email, role: p.role as User['role'], organizationId: p.organization_id ?? undefined });
 const event = (e: Row<'events'>): Event => ({ id: e.id, organizationId: e.organization_id, title: e.title, description: e.description, category: e.category, venue: e.venue, date: e.start_at, capacity: e.capacity, status: e.status as Event['status'], theme: e.theme, registrationDeadline: e.registration_deadline });
 const ticket = (t: Row<'tickets'>): Ticket => ({ id: t.id, registrationId: t.registration_id, eventId: t.event_id, payload: t.payload });
@@ -21,7 +22,7 @@ function success({ error }: { error: { message: string } | null }) { if (error) 
 async function all<T extends keyof Database['public']['Tables']>(table: T): Promise<Row<T>[]> {
   const rows: Row<T>[] = [];
   for (let offset = 0; ; offset += 500) {
-    const page = checked(await client().from(table).select('*').order('id').range(offset, offset + 499)) as unknown as Row<T>[];
+    const page = checked(await client().from(table).select('*').order(table === 'registration_notifications' ? 'registration_id' : 'id').range(offset, offset + 499)) as unknown as Row<T>[];
     rows.push(...page);
     if (page.length < 500) return rows;
   }
@@ -48,14 +49,15 @@ export const service = {
   },
   async logout() { success(await client().auth.signOut()); },
   async snapshot(): Promise<Snapshot> {
-    const [organizations, events, registrations, tickets, attendance, users, counts] = await Promise.all([
-      all('organizations'), all('events'), all('registrations'), all('tickets'), all('attendance'), all('profiles'), eventCounts(),
+    const [organizations, events, registrations, tickets, attendance, users, counts, notifications] = await Promise.all([
+      all('organizations'), all('events'), all('registrations'), all('tickets'), all('attendance'), all('profiles'), eventCounts(), all('registration_notifications'),
     ]);
     return {
       organizations: organizations.map(o => ({ id: o.id, name: o.name, short: o.short })), events: events.map(event),
       registrations: registrations.map(r => ({ id: r.id, studentId: r.user_id, eventId: r.event_id, status: r.status as Registration['status'], createdAt: r.registered_at })),
       tickets: tickets.map(ticket), attendance: attendance.map(a => ({ id: a.id, registrationId: a.registration_id, eventId: a.event_id, scannedAt: a.checked_in_at })),
       users: users.map(profile), counts: Object.fromEntries(counts.map(c => [c.event_id, Number(c.accepted_count)])),
+      notifications: notifications.map(n => ({ registrationId: n.registration_id, eventId: n.event_id, status: n.status as Confirmation['status'], message: n.message, error: n.error_message })),
     };
   },
   async availability() {
@@ -72,11 +74,21 @@ export const service = {
     const [result, counts] = await Promise.all([request.range(page * pageSize, (page + 1) * pageSize - 1), eventCounts()]);
     return { events: checked(result).map(event), total: result.count ?? 0, counts: Object.fromEntries(counts.map(c => [c.event_id, Number(c.accepted_count)])) };
   },
-  async register(eventId: string) {
+  async register(eventId: string): Promise<string> {
     const user = await service.session();
     if (!user) throw new Error('Please sign in to continue.');
     const r = checked(await client().from('registrations').insert({ event_id: eventId, user_id: user.id }).select('id').single());
-    return ticket(checked(await client().from('tickets').select('*').eq('registration_id', r.id).single()));
+    // The insert is committed. A lost publishing reply must never invite a second insert.
+    try {
+      const state = checked(await client().rpc('publish_confirmation', { registration: r.id }));
+      if (state === 'ready') return 'Registration confirmed! Your QR ticket is ready in My tickets.';
+    } catch { /* The durable pending record is visible to the student and organizer. */ }
+    return 'Registration accepted. Your ticket is saved; confirmation is pending. Open My tickets to view or retry it.';
+  },
+  async publishConfirmation(registration: string) {
+    const state = checked(await client().rpc('publish_confirmation', { registration }));
+    if (state === 'failed') throw new Error('Confirmation could not be published. Your registration is saved. Please retry.');
+    return state === 'inactive' ? 'Registration or event cancelled. Confirmation inactive.' : 'Confirmation published.';
   },
   async cancelRegistration(id: string) { checked(await client().from('registrations').update({ status: 'cancelled' }).eq('id', id).select('id').single()); },
   async saveEvent(input: Pick<Event, 'title' | 'description' | 'date' | 'venue' | 'capacity' | 'category'>, id?: string, organizationId?: string) {

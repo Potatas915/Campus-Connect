@@ -1,10 +1,22 @@
+## Core MTP completion — 2026-10-29
+
+The current app has real browser camera scanning plus an exact-payload paste fallback, durable portal confirmations, organizer confirmation retry and five-second attendance-report refresh. `src/main.tsx` is the bootstrap; screens live in `src/App.tsx` and focused feature modules. Application commands run in `Campus-Connect/`; database commands run in the parent containing `supabase/`.
+
+Apply all versioned migrations, including `20261029010000_registration_notifications.sql`, before running the current app. The new migration preserves registrations/tickets, queues one confirmation for each eligible historical registration and skips cancelled history. Publication is a separate authenticated RPC: a network/publisher failure leaves registration accepted and notification pending/failed. Students see confirmations in My tickets; organizers see pending/failed items and Retry confirmation on their dashboard. These are portal messages; no email/push delivery or public failure-simulation switch is included.
+
+Camera access requires HTTPS or localhost and explicit Start camera. Stop camera, navigation and logout release streams. Validate QR accepts the exact contents of an issued ticket, including input from an external decoder; it never bypasses server validation. After a camera result select Scan next. Reports retain their last loaded records on refresh failure and show recovery guidance; they poll every five seconds and offer Refresh report.
+
+The nested `Campus-Connect/` Git repository exists on this device. Prior notes about absent Git, `website/`, simulation-only scanning and the initial seat-refresh defect are historical. QR signing/expiry/time-window rules, offline queues, payment and native mobile work remain outside the selected core scope.
+
+Run `npm.cmd test`, `npm.cmd run lint` and `npm.cmd run build`. The SQL harness can also load a pre-upgrade migration boundary to prove data-preserving backfill. Browser checks use Playwright with installed Microsoft Edge (`msedge`); browser/port configuration is in `playwright.config.ts`. For the designated seeded development backend only, run `$env:MTP_DEVELOPMENT_TEST='1'; npm.cmd run test:e2e`. This creates new synthetic fixture events/registrations and reserved example.com signup accounts and retains them as evidence. It never deletes, resets or reseeds. Do not enable it against production. Browser traces/storage states are not saved. See `qa-audit/2026-10-29/ACCEPTANCE.md` for actual results and limits.
+
 # Campus · Student Organization Event Portal
 
 React 19 + TypeScript + Vite website backed by Supabase Auth and PostgreSQL. The existing design is retained. The discontinued application is excluded from this work.
 
 ## Setup
 
-Use Node 22.12+ (22.x), 24.x, or 26+ and npm. Run application commands inside `website/`:
+Use Node 22.12+ (22.x), 24.x, or 26+ and npm. Run application commands inside `Campus-Connect/`:
 
 ```powershell
 npm.cmd ci
@@ -57,9 +69,9 @@ Browsing requires login, matching the existing UI. Students discover/search/filt
 
 Only draft event details are editable by organizers. Opening/cancellation follow the original lifecycle; cancellation retains registrations/attendance. Registration rejects full, draft, closed, cancelled, completed, past or deadline-expired events. PostgreSQL serializes registration changes on the event row and counts all accepted registrations, regardless of the caller's row visibility. Uniqueness constraints prevent duplicate registrations, tickets and attendance. Standard READ COMMITTED database transactions are assumed; do not change transaction isolation without rechecking concurrency behavior.
 
-QR JSON retains `version`, `eventId`, `registrationId` and `ticketId`. Real QR images are rendered; scanning remains a simulation. The server validates ticket identity, selected event, organization ownership and cancellation before recording check-in once. QR signing/expiry, camera scanning and attendance windows remain unspecified. Schedules display in Asia/Manila, including editing UTC timestamps as Philippine local time.
+QR JSON retains `version`, `eventId`, `registrationId` and `ticketId`. Real QR images are rendered; the browser scanner accepts camera input or pasted payloads. The server validates ticket identity, selected event, organization ownership and cancellation before recording check-in once. QR signing/expiry, camera scanning and attendance windows remain unspecified. Schedules display in Asia/Manila, including editing UTC timestamps as Philippine local time.
 
-Browser-local demo accounts and records are no longer used or imported. Existing localStorage data is preserved. The old global reset control is now test-data information; it cannot erase a shared database. Reports use database records and exclude cancelled registrations. Data refreshes after actions and when the browser regains focus; there is no Realtime subscription or offline synchronization.
+Browser-local demo accounts and records are no longer used or imported. Existing localStorage data is preserved. The old global reset control is now test-data information; it cannot erase a shared database. Reports use database records and exclude cancelled registrations. Data refreshes after actions and when the browser regains focus; reports also refresh every five seconds; there is no Realtime subscription or offline synchronization.
 
 | Table | Student | Organizer | Admin |
 | --- | --- | --- | --- |
@@ -75,7 +87,7 @@ RLS is enabled on every table. Private security-definer functions have fixed emp
 
 ## Checks and types
 
-Inside `website/`:
+Inside `Campus-Connect/`:
 
 ```powershell
 npm.cmd test
@@ -92,6 +104,6 @@ Database tests apply the real migration to PGlite PostgreSQL with actual RLS/API
 npx.cmd --yes supabase@2.122.0 gen types --project-id YOUR_PROJECT_REF --schema public --lang typescript
 ```
 
-Save successful output to `website/src/database.types.ts` (check command success before replacing the file). Rebuild after regenerating. No SSR helper is needed for this Vite SPA. Deployments must serve SPA fallback to `index.html` and supply the Vite variables at build time.
+Save successful output to `Campus-Connect/src/database.types.ts` (check command success before replacing the file). Rebuild after regenerating. No SSR helper is needed for this Vite SPA. Deployments must serve SPA fallback to `index.html` and supply the Vite variables at build time.
 
 Implementation status, changed-file inventory and remaining verification are in `SUPABASE_IMPLEMENTATION.md`. Official setup reference: https://supabase.com/docs/guides/auth/quickstarts/react

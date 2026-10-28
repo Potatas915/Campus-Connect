@@ -1,3 +1,9 @@
+# Current implementation — 2026-10-29
+
+The additive registration-notification migration, real browser/paste scanner and refreshed reports supersede the simulation-only and no-notification limitations in the historical implementation record below. Current verification is recorded in [core acceptance](qa-audit/2026-10-29/ACCEPTANCE.md). The nested application now has Git; the root schema and second brain are outside it. No old migration was rewritten and no shared reset/reseed was performed.
+
+## Historical implementation record
+
 # Supabase implementation — 2026-10-27
 
 ## Outcome

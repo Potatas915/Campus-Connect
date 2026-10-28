@@ -8,5 +8,5 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   { files: ['src/**/*.{ts,tsx}'], plugins: { 'react-hooks': hooks }, rules: { 'react-hooks/rules-of-hooks': 'error' } },
   { files: ['src/**/*.{ts,tsx}'], rules: { '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }] } },
-  { files: ['**/*.{js,mjs}'], languageOptions: { globals: { console: 'readonly', process: 'readonly', URL: 'readonly' } } },
+  { files: ['**/*.{js,mjs}'], languageOptions: { globals: { console: 'readonly', process: 'readonly', URL: 'readonly', fetch: 'readonly' } } },
 );

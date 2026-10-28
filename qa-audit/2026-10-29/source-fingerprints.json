@@ -1,0 +1,30 @@
+[
+  {
+    "path": "Campus-Connect/src/App.tsx",
+    "sha256": "6DB3518BA0D9CF6469D50641D67D85EB2D785ECF4F9697D27B49AFAD1CB42AC6"
+  },
+  {
+    "path": "Campus-Connect/src/service.ts",
+    "sha256": "30C732D773302E3B8294BB97F1F0C20878D0D94AA1F1F4EBD54B1F3CB52AB421"
+  },
+  {
+    "path": "Campus-Connect/src/Scanner.tsx",
+    "sha256": "0C4D21168E39A6B04B4D421B02F2CC7307240D58CAD8A5AF8116498F67C75801"
+  },
+  {
+    "path": "Campus-Connect/src/camera.ts",
+    "sha256": "B3F2A2CEF8DDA6E98FB9075B0ECAC25CC82460608B8B7427196439CFE46630DF"
+  },
+  {
+    "path": "Campus-Connect/src/ReportRefresh.tsx",
+    "sha256": "0B1DDDFACF9E77CC3F51367D865D1051E78385E93A7FB7F6376332CECF9BF0A0"
+  },
+  {
+    "path": "Campus-Connect/src/Confirmations.tsx",
+    "sha256": "7B9CB7C158877F1D147EB778AF3CDF7085A19E8E46F6B1540FFB479CC9D5C5B1"
+  },
+  {
+    "path": "supabase/migrations/20261029010000_registration_notifications.sql",
+    "sha256": "AA1356A1807CA7928D4152D4FAF7907CCA39F345EEFB7B83E7D6D28EEE0ACD31"
+  }
+]
